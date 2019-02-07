@@ -1,0 +1,110 @@
+$def with (hots, last, trend)
+
+$def getTags(source):
+    <div>
+    $for tag in source:
+        <a href="#"><span class="badge badge-secondary">{hashify('$tag')}</span></a>
+    </div>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>bHash</title>
+
+    <!-- Bootstrap core CSS -->
+    $#    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <!-- Custom fonts for this template -->
+    $#    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.7.0/js/all.js" integrity="sha384-qD/MNBVMm3hVYCbRTSOW130+CWeRIKbpot9/gR1BHkd7sIct4QKhT1hOPd+2hO8K" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/grayscale.min.css" rel="stylesheet">
+    <link href="/css/bhash.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="app"></div>
+
+<!-- About Section -->
+<section id="about" class="about-section text-center">
+    <div class="container">
+        <div class="row" id="welcome"></div>
+
+        <div class="social d-flex justify-content-center">
+            <a href="#" class="mx-2">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="mx-2">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="mx-2">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-black small text-center text-white-50">
+    <div class="container">
+        Copyright &copy; ACe 2019
+    </div>
+</footer>
+
+<script type="text/babel" src="/js/bhash.babel"></script>
+<script src="/js/bhash.js"></script>
+
+<script type="text/babel">
+    const Hots = (
+        $:getTags(hots)
+    );
+    const Last = (
+        $:getTags(last)
+    );
+    const Trend = (
+        $:getTags(trend)
+    );
+
+    const App = <BHashApp hots={Hots} last={Last} trend={Trend} />;
+    ReactDOM.render(App, document.getElementById("app"));
+	ReactDOM.render(Welcome, document.getElementById("welcome"));
+$#	ReactDOM.render(Hots, document.getElementById("hot"));
+$#	ReactDOM.render(Last, document.getElementById("last"));
+$#	ReactDOM.render(Trend, document.getElementById("trend"));
+
+$#    const Posts = <PostStack tag="1st" />;
+$#    ReactDOM.render(Posts, document.getElementById("posts"));
+</script>
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+<!-- Plugin JavaScript -->
+<script src="/js/jquery.easing.min.js"></script>
+
+<!-- Load React. -->
+<!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+<script src="/js/react.production.min.js" crossorigin></script>
+<script src="/js/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+<!-- Custom scripts for this template -->
+<script src="/js/grayscale.min.js"></script>
+
+</body>
+</html>

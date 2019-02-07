@@ -1,0 +1,99 @@
+.cursor-hash {
+	opacity: 0;
+	animation: cursor 1s infinite;
+	color: green !important;
+}
+@keyframes cursor {
+	0% {
+		opacity: 0;
+	}
+	40% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	90% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.posts-section {
+    padding: 0 !important
+}
+
+.contact-section {
+    padding: 5rem 0 !important;
+}
+
+.bg-hot {
+    background-color: #DC9596;
+}
+
+.bg-last {
+    background-color: #96E6B3;
+}
+
+.bg-trend {
+    background-color: #D3FFE9;
+}
+
+.text-hot, .text-last, .text-trend {
+    color: #090909 !important;
+}
+
+.card {
+    border-color: #4B5043 !important;
+}
+
+.card hr {
+    border-color: #4B5043 !important;
+}
+
+.about-section {
+    padding: 2rem 0 !important;
+    background: -webkit-gradient(linear,left bottom,left top,from(#161616),color-stop(75%,rgba(22,22,22,.9)),to(rgba(22,22,22,.8)));
+    background: linear-gradient(to top,#161616 0,rgba(22,22,22,.9) 75%,rgba(22,22,22,.8) 100%);
+}
+
+.projects-section .project-text {
+    padding: 2rem;
+}
+
+.signup-section {
+    background: -webkit-gradient(linear,left top,left bottom,from(rgba(22,22,22,.1)),color-stop(75%,rgba(22,22,22,.5)),to(#161616)),url(../img/hashes.jpg);
+    background: linear-gradient(to bottom,rgba(22,22,22,.1) 0,rgba(22,22,22,.5) 75%,#161616 100%),url(../img/hashes.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.form-inline input {
+    -webkit-box-shadow: 0 .1875rem .1875rem 0 rgba(0,0,0,.1)!important;
+    box-shadow: 0 .1875rem .1875rem 0 rgba(0,0,0,.1)!important;
+    padding: 1.25rem 2rem;
+    height: auto;
+    font-family: 'Varela Round';
+    font-size: 80%;
+    text-transform: uppercase;
+    letter-spacing: .15rem;
+    border: 0;
+}
+
+#mainNav {
+    background-color: #fff;
+}
+
+#mainNav .navbar-brand {
+    color: #161616;
+}
+
+#mainNav.navbar-shrink {
+    background-color: #ddd;
+}
+
+.wide {
+    min-width: 350px;
+}
