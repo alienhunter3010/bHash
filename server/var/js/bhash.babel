@@ -10,6 +10,8 @@ const TagContext = React.createContext({
     refresh: () => {},
 });
 
+
+
 class BHashTag extends React.Component {
 
     render() {
@@ -25,6 +27,16 @@ class BHashTag extends React.Component {
             </React.Fragment>
         );
     }
+}
+
+function PositionalImage(props) {
+    return props.mode ?
+        <div class="col-lg-6 order-md-1 order-lg-1">
+            <img class="img-fluid" src={props.url} alt="" />
+        </div> :
+        <div class="col-lg-6 order-md-1 order-lg-12">
+            <img class="img-fluid" src={props.url} alt="" />
+        </div>;
 }
 
 class PostStack extends React.Component {
@@ -80,17 +92,20 @@ class PostStack extends React.Component {
     } else if (!isLoaded) {
       return <div>Loading...</div>;
     } else {
-      items.map(item => (
-        item.gravatarUrl = "https://gravatar.com/avatar/" + item.gravatar + '?s=40&d=robohash'
-      ));
+        var c=0;
+        items.map(item => (
+            item.image = '/img/HashtagEightys.png',
+            item.gravatarUrl = "https://gravatar.com/avatar/" + item.gravatar + '?s=40&d=robohash',
+            item.odd = ++c % 2
+        ));
       return (
         <React.Fragment>
         {items.map(item => (
         <div class="row justify-content-center no-gutters mb-5 mb-lg-0">
-            <div class="col-lg-6">
-                <img class="img-fluid" src="/img/HashtagEightys.png" alt="" />
-            </div>
-            <div class="col-lg-6">
+
+            <PositionalImage mode={item.odd} url={item.image} />
+
+            <div class="col-lg-6 order-md-12 order-lg-6">
                 <div class="bg-black text-center h-100 project">
                     <div class="d-flex h-100">
                         <div class="project-text w-100 my-auto text-center text-lg-left">
@@ -146,8 +161,8 @@ class BHashApp extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        if (this.searchText != event.target.childNodes[0].value) {
-            this.searchText = event.target.childNodes[0].value;
+        if (this.searchText != event.target[0].value) {
+            this.searchText = event.target[0].value;
         }
         this.refresh(this.searchText);
     }
@@ -163,8 +178,13 @@ class BHashApp extends React.Component {
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item smooth-scroll">
                     <form id="formHash" class="form-inline d-flex" onSubmit={this.handleSubmit}>
-                        <input type="filter" class="form-control flex-fill wide" id="inputHash" placeholder="Filter an #hashtag" onChange={this.handleChange} />
-                        <button id="submitHash" type="submit" class="btn btn-primary mx-auto mb-sm-2 mt-2">Filter</button>
+                        <div class="input-group flex-fill wide">
+                            <input type="filter" class="form-control" id="inputHash" placeholder="Filter an #hashtag" onChange={this.handleChange} />
+                            <div class="input-group-append d-sm-flex d-md-none">
+                              <span class="input-group-text">&#9166;</span>
+                            </div>
+                        </div>
+                        <button id="submitHash" type="submit" class="btn btn-primary mx-auto mb-sm-2 mt-2 d-none d-sm-none d-md-block">Filter</button>
                     </form>
                 </li>
             </ul>
