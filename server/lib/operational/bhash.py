@@ -25,6 +25,10 @@ class BHash:
             return db.getLastByUsername(username, limit)
         raise OperationalException('A username or UID is needed')
 
+    def byTime(self, limit=Config.defaultResultLimit):
+        db = EnqueryPersistance()
+        return db.getLastByTime(limit)
+
     def byTag(self, tag, limit=Config.defaultResultLimit):
         db = EnqueryPersistance()
         return db.getLastByTag(tag, limit)
@@ -33,13 +37,13 @@ class BHash:
         db = EnqueryPersistance()
         return db.getPostById(id)
 
-    def register(self, username, password):
+    def register(self, username, password, email=None):
         if len(username) < Config.minUsernameLen:
             raise AuthException('Username must be at least {} chr long'.format(Config.minUsernameLen))
         if len(password) < Config.minPasswordLen:
             raise AuthException('Password must be at least {} chr long'.format(Config.minPasswordLen))
         db = AuthPersistance()
-        db.registerUser(username, password)
+        db.registerUser(username, password, email)
 
     def token(self, username, password, duration=Config.sessionLength):
         if duration is None:

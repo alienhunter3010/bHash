@@ -25,8 +25,8 @@ class Persistance:
         cur.close()
 
     def insertQuery(self, query, arguments):
+        cur = self.keepQuery(query, arguments)
         try:
-            cur = self.keepQuery(query, arguments)
             return cur.lastrowid
         finally:
             self.cnx.commit()
@@ -53,8 +53,10 @@ class EnqueryPersistance(Persistance):
             cur.close()
         return result
 
-    def getPosts(self, query, filter, limit):
-        cur = self.keepQuery(query, (filter, min(limit, DBConfig.securityResultLimit)))
+    def getPosts(self, query, qfilter=None, limit=DBConfig.securityResultLimit):
+        limit = min(limit, DBConfig.securityResultLimit)
+        filters = (limit,) if qfilter is None else (qfilter, limit)
+        cur = self.keepQuery(query, filters)
 
         posts = []
         try:
@@ -93,6 +95,10 @@ class EnqueryPersistance(Persistance):
         query = self.postData + " WHERE username=%s ORDER BY bh_posts.created DESC LIMIT %s"
         return self.getPosts(query, username, limit)
 
+    def getLastByTime(self, limit=DBConfig.defaultResultLimit):
+        query = self.postData + " ORDER BY bh_posts.created DESC LIMIT %s"
+        return self.getPosts(query, limit=limit)
+
     def getLastByTag(self, tag, limit=DBConfig.defaultResultLimit):
         query = self.postData + " INNER JOIN bh_posts_tags ON bh_posts_tags.bh_post=bh_posts.id" \
                                 " WHERE bh_tag=%s ORDER BY bh_posts.created DESC LIMIT %s"
@@ -104,9 +110,11 @@ class EnqueryPersistance(Persistance):
 
 
 class AuthPersistance(Persistance):
-    def registerUser(self, login, password):
-        query = "INSERT INTO bh_users SET username=%s, password=MD5(CONCAT(%s, %s))"
-        self.doQuery(query, (login, DBConfig.seed, password))
+    def registerUser(self, login, password, email=None):
+        if email is None:
+            email = '{}@{}'.format(login, DBConfig.gravatarFakeDomain)
+        query = "INSERT INTO bh_users SET username=%s, password=MD5(CONCAT(%s, %s)), email=%s"
+        self.doQuery(query, (login, DBConfig.seed, password, email))
 
     def checkUser(self, login, password):
         query = "SELECT id FROM bh_users WHERE username=%s AND password=MD5(CONCAT(%s, %s))"

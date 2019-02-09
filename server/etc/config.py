@@ -28,6 +28,7 @@ class Config:
     minPasswordLen = 6
 
     gravatarDefault = 'robohash'
+    gravatarFakeDomain = 'nowhere.org'
 
     def __init__(self):
         raise Exception('Use this class as static placeholder')

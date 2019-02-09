@@ -3,7 +3,7 @@ $def with (hots, last, trend)
 $def getTags(source):
     <div>
     $for tag in source:
-        <a href="#"><span class="badge badge-secondary">{hashify('$tag')}</span></a>
+        <a onclick="this.handleClick.bind(this, '$tag')" href="#"><span class="badge badge-secondary">{hashify('$tag')}</span></a>
     </div>
 
 <!DOCTYPE html>
@@ -68,25 +68,9 @@ $def getTags(source):
 <script src="/js/bhash.js"></script>
 
 <script type="text/babel">
-    const Hots = (
-        $:getTags(hots)
-    );
-    const Last = (
-        $:getTags(last)
-    );
-    const Trend = (
-        $:getTags(trend)
-    );
-
-    const App = <BHashApp hots={Hots} last={Last} trend={Trend} />;
+    const App = <BHashApp hots={<BHashTag items={$:hots} />} last={<BHashTag items={$:last} />} trend={<BHashTag items={$:trend} />} />;
     ReactDOM.render(App, document.getElementById("app"));
 	ReactDOM.render(Welcome, document.getElementById("welcome"));
-$#	ReactDOM.render(Hots, document.getElementById("hot"));
-$#	ReactDOM.render(Last, document.getElementById("last"));
-$#	ReactDOM.render(Trend, document.getElementById("trend"));
-
-$#    const Posts = <PostStack tag="1st" />;
-$#    ReactDOM.render(Posts, document.getElementById("posts"));
 </script>
 
 <!-- Bootstrap core JavaScript -->

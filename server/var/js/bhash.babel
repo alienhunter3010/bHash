@@ -1,14 +1,38 @@
-    const Welcome = (
-	    <div class="col-lg-8 mx-auto">
-            <h2 class="text-white mb-4">This is not the code you are looking for</h2>
-            <p class="text-white-50">Web is a detail. Awesome code is under the hood.</p>
-        </div>
-    );
+const Welcome = (
+    <div class="col-lg-8 mx-auto">
+        <h2 class="text-white mb-4">This is not the code you are looking for</h2>
+        <p class="text-white-50">Web is a detail. Awesome code is under the hood.</p>
+    </div>
+);
+
+const TagContext = React.createContext({
+    tag: '',
+    refresh: () => {},
+});
+
+class BHashTag extends React.Component {
+
+    render() {
+        return (
+            <React.Fragment>
+            {this.props.items.map(item => (
+            <TagContext>
+                {({tag, refresh}) => (
+                        <a onClick={refresh.bind(this, item)} href="#posts"><span class="badge badge-secondary mx-1">#{item}</span></a>
+                    )}
+            </TagContext>
+            ))}
+            </React.Fragment>
+        );
+    }
+}
 
 class PostStack extends React.Component {
+  previousTag = undefined;
 
   constructor(props) {
     super(props);
+
     this.state = {
       error: null,
       isLoaded: false,
@@ -16,14 +40,15 @@ class PostStack extends React.Component {
     };
   }
 
-  componentDidMount() {
-    fetch("https://bhash.raspberryip.com/s/byTag/" + this.props.tag)
+  postUpdate(url) {
+    fetch(url)
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
             isLoaded: true,
-            items: result.items
+            items: result.items,
+            error: null
           });
         },
         // Note: it's important to handle errors here
@@ -38,6 +63,16 @@ class PostStack extends React.Component {
       )
   }
 
+  componentDidMount() {
+    this.postUpdate("https://bhash.raspberryip.com/s/byTime");
+  }
+  componentDidUpdate() {
+    if (this.props.tag != this.previousTag) {
+        this.previousTag = this.props.tag;
+        this.postUpdate("https://bhash.raspberryip.com/s/byTag/" + this.props.tag);
+    }
+  }
+
   render() {
     const { error, isLoaded, items } = this.state;
     if (error) {
@@ -46,23 +81,26 @@ class PostStack extends React.Component {
       return <div>Loading...</div>;
     } else {
       items.map(item => (
-        item.gravatar = "https://gravatar.com/avatar/" + item.gravatar + '?s=40'
+        item.gravatarUrl = "https://gravatar.com/avatar/" + item.gravatar + '?s=40&d=robohash'
       ));
       return (
         <React.Fragment>
         {items.map(item => (
         <div class="row justify-content-center no-gutters mb-5 mb-lg-0">
             <div class="col-lg-6">
-                <img class="img-fluid" src="/img/demo-image-01.jpg" alt="" />
+                <img class="img-fluid" src="/img/HashtagEightys.png" alt="" />
             </div>
             <div class="col-lg-6">
                 <div class="bg-black text-center h-100 project">
                     <div class="d-flex h-100">
                         <div class="project-text w-100 my-auto text-center text-lg-left">
-                            <h4 class="text-white"><img src={item.gravatar} alt="profile" /> {item.username}</h4>
+                            <h4 class="text-white"><img src={item.gravatarUrl} alt="profile" /> {item.username}</h4>
                             <p class="mb-0 text-white-50">{item.content}</p>
                             <hr class="d-none d-lg-block mb-0 ml-0" />
-                            <small>{item.created}</small>
+                            <small><i class="fas fa-clock"></i> {item.created}</small>
+                            <div>
+                                <BHashTag items={item.tags} />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,6 +114,43 @@ class PostStack extends React.Component {
 }
 
 class BHashApp extends React.Component {
+    searchText='';
+
+    constructor(props) {
+        super(props);
+
+        this.refreshPage = (tag) => {
+            document.getElementById('inputHash').value = tag;
+            this.refresh(tag);
+        };
+
+        this.state = {
+            value: '',
+            refresh: this.refreshPage
+      };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    refresh(tag) {
+        this.props.tag = tag;
+        this.setState({value: tag});
+        this.searchText = tag;
+        location.href = "#posts";
+    }
+
+    handleChange(event) {
+        this.searchText = event.target.value;
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        if (this.searchText != event.target.childNodes[0].value) {
+            this.searchText = event.target.childNodes[0].value;
+        }
+        this.refresh(this.searchText);
+    }
 
     render() {
         return (
@@ -86,10 +161,10 @@ class BHashApp extends React.Component {
         <a class="navbar-brand js-scroll-trigger" href="#page-top">b<span class="cursor-hash">H</span>ash</a>
         <div id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <form class="form-inline d-flex">
-                        <input type="filter" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-2 mt-2 wide" id="inputHash" placeholder="Filter an #hashtag" />
-                        <button type="submit" class="btn btn-primary mx-auto mb-sm-2 mt-2">Filter</button>
+                <li class="nav-item smooth-scroll">
+                    <form id="formHash" class="form-inline d-flex" onSubmit={this.handleSubmit}>
+                        <input type="filter" class="form-control flex-fill wide" id="inputHash" placeholder="Filter an #hashtag" onChange={this.handleChange} />
+                        <button id="submitHash" type="submit" class="btn btn-primary mx-auto mb-sm-2 mt-2">Filter</button>
                     </form>
                 </li>
             </ul>
@@ -107,10 +182,12 @@ class BHashApp extends React.Component {
     </div>
 </header>
 
-{/* Projects Section */}
-<section id="projects" class="projects-section posts-section bg-black">
+{/* Posts Section */}
+<section id="posts" class="projects-section posts-section bg-black">
     <div class="container">
-        <PostStack tag="1st" />
+        <TagContext.Provider value={this.state}>
+            <PostStack tag={this.props.tag} />
+        </TagContext.Provider>
         <img src="/img/ipad.png" class="img-fluid" alt="" />
     </div>
 </section>
@@ -124,7 +201,9 @@ class BHashApp extends React.Component {
                         <i class="fas fa-fire-alt text-hot mb-2"></i>
                         <h4 class="text-uppercase m-0">Hot</h4>
                         <hr class="my-4 text-hot" />
-                        {this.props.hots}
+                        <TagContext.Provider value={this.state}>
+                            {this.props.hots}
+                        </TagContext.Provider>
                     </div>
                 </div>
             </div>
@@ -135,7 +214,9 @@ class BHashApp extends React.Component {
                         <i class="fas fa-clock text-last mb-2"></i>
                         <h4 class="text-uppercase m-0">Last</h4>
                         <hr class="my-4 text-last" />
-                        {this.props.last}
+                        <TagContext.Provider value={this.state}>
+                            {this.props.last}
+                        </TagContext.Provider>
                     </div>
                 </div>
             </div>
@@ -146,7 +227,9 @@ class BHashApp extends React.Component {
                         <i class="fas fa-eye text-trend mb-2"></i>
                         <h4 class="text-uppercase m-0">Trend</h4>
                         <hr class="my-4 text-trend" />
-                        {this.props.trend}
+                        <TagContext.Provider value={this.state}>
+                            {this.props.trend}
+                        </TagContext.Provider>
                     </div>
                 </div>
             </div>

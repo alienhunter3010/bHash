@@ -20,45 +20,49 @@ class Service(WebUtility):
         except:
             return Config.defaultResultLimit
 
-    def getResults(self, func, pathinfo=(), args={}):
+    def getResults(self, func, pathinfo, args):
         args.setdefault('limit', self.setResultLimit(
             pathinfo[0] if len(pathinfo) > 0 else Config.defaultResultLimit))
         return func(args.get('limit'))
 
-    def hotTags(self, pathinfo=(), args={}):
+    def hotTags(self, pathinfo, args):
         return self.getResults(self.bHash.hotTags, pathinfo, args)
 
-    def lastTags(self, pathinfo=(), args={}):
+    def lastTags(self, pathinfo, args):
         return self.getResults(self.bHash.lastTags, pathinfo, args)
 
-    def trendTags(self, pathinfo=(), args={}):
+    def trendTags(self, pathinfo, args):
         return self.getResults(self.bHash.trendTags, pathinfo, args)
 
-    def byUser(self, pathinfo=(), args={}):
+    def byUser(self, pathinfo, args):
         args.setdefault('limit', self.setResultLimit(pathinfo[1]) if len(pathinfo) > 1 else Config.defaultResultLimit)
         args.setdefault('uid' if pathinfo[0].isnumeric() else 'username', pathinfo[0] if len(pathinfo) > 0 else None)
         args.setdefault('uid')
         args.setdefault('username')
         return self.asJson(self.bHash.byUser(args.get('uid'), args.get('username'), args.get('limit')), 'items')
 
-    def byTag(self, pathinfo=(), args={}):
+    def byTime(self, pathinfo, args):
+        args.setdefault('limit', self.setResultLimit(pathinfo[0]) if len(pathinfo) > 0 else Config.defaultResultLimit)
+        return self.asJson(self.bHash.byTime(args.get('limit')), 'items')
+
+    def byTag(self, pathinfo, args):
         args.setdefault('tag', pathinfo[0] if len(pathinfo) > 0 else None)
         args.setdefault('limit', self.setResultLimit(pathinfo[1]) if len(pathinfo) > 1 else Config.defaultResultLimit)
         return self.asJson(self.bHash.byTag(args.get('tag'), args.get('limit')), 'items')
 
-    def byId(self, pathinfo=(), args={}):
+    def byId(self, pathinfo, args):
         if len(pathinfo) > 0:
             args.setdefault('id', pathinfo[0])
         return self.bHash.byId(args.get('id'))
 
-    def register(self, pathinfo=(), args={}):
+    def register(self, pathinfo, args):
         if len(args) == 0:
-            args = self.gerarchyInterpreter(pathinfo, ('username', 'password'))
+            args = self.gerarchyInterpreter(pathinfo, ('username', 'password', 'email'))
 
-        self.bHash.register(args.get('username'), args.get('password'))
+        self.bHash.register(args.get('username'), args.get('password'), args.get('email', None))
         return 'User %s saved' % args.get('username')
 
-    def token(self, pathinfo=(), args={}):
+    def token(self, pathinfo, args):
         if len(args) == 0:
             args = self.gerarchyInterpreter(pathinfo, ('username', 'password', 'duration'))
         args.setdefault('duration', None)
@@ -69,7 +73,7 @@ class Service(WebUtility):
         except:
             raise HttpStatus(403, 'Auth failed')
 
-    def publish(self, pathinfo=(), args={}):
+    def publish(self, pathinfo, args):
         if len(pathinfo) > 0:
             args.setdefault('token', pathinfo[0])
         try:
@@ -80,12 +84,12 @@ class Service(WebUtility):
             raise HttpStatus(500, e)
 
     def GET(self, pathinfo):
-        return self.controller(pathinfo)
+        return self.controller(pathinfo, {})
 
     def POST(self, pathinfo):
         return self.controller(pathinfo, web.input())
 
-    def controller(self, pathinfo, args={}):
+    def controller(self, pathinfo, args):
         pi = self.getOp(pathinfo)
         try:
             method = getattr(type(self), pi[0])
