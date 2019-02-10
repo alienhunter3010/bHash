@@ -19,11 +19,9 @@ $def getTags(source):
     <title>bHash</title>
 
     <!-- Bootstrap core CSS -->
-    $#    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <!-- Custom fonts for this template -->
-    $#    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.7.0/js/all.js" integrity="sha384-qD/MNBVMm3hVYCbRTSOW130+CWeRIKbpot9/gR1BHkd7sIct4QKhT1hOPd+2hO8K" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -62,10 +60,11 @@ $def getTags(source):
 </footer>
 
 <script type="text/babel" src="/js/bhash.babel"></script>
+<script type="text/javascript" src="/js/remarkable.min.js"></script>
 <script src="/js/bhash.js"></script>
 
 <script type="text/babel">
-    const App = <BHashApp hots={<BHashTag items={$:hots} />} last={<BHashTag items={$:last} />} trend={<BHashTag items={$:trend} />} />;
+    const App = <BHashApp hots={<BHashTag items={$:hots} url="/s/hotTags" />} last={<BHashTag items={$:last} url="/s/lastTags" />} trend={<BHashTag items={$:trend} url="/s/trendTags" />} />;
     ReactDOM.render(App, document.getElementById("app"));
 	ReactDOM.render(Welcome, document.getElementById("welcome"));
 </script>

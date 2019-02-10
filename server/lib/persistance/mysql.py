@@ -113,12 +113,12 @@ class AuthPersistance(Persistance):
     def registerUser(self, login, password, email=None):
         if email is None:
             email = '{}@{}'.format(login, DBConfig.gravatarFakeDomain)
-        query = "INSERT INTO bh_users SET username=%s, password=MD5(CONCAT(%s, %s)), email=%s"
-        self.doQuery(query, (login, DBConfig.seed, password, email))
+        query = "INSERT INTO bh_users SET username=%s, password=MD5(CONCAT(%s, %s, %s)), email=%s"
+        self.doQuery(query, (login, DBConfig.seed, password, login, email))
 
     def checkUser(self, login, password):
-        query = "SELECT id FROM bh_users WHERE username=%s AND password=MD5(CONCAT(%s, %s))"
-        cur = self.keepQuery(query, (login, DBConfig.seed, password))
+        query = "SELECT id FROM bh_users WHERE username=%s AND password=MD5(CONCAT(%s, %s, %s))"
+        cur = self.keepQuery(query, (login, DBConfig.seed, password, login))
         try:
             for uid in cur:
                 return uid[0]

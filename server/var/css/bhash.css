@@ -1,7 +1,7 @@
 .cursor-hash {
 	opacity: 0;
 	animation: cursor 1s infinite;
-	color: green !important;
+	color: #64a19d;
 }
 @keyframes cursor {
 	0% {
@@ -75,7 +75,7 @@
     box-shadow: 0 .1875rem .1875rem 0 rgba(0,0,0,.1)!important;
     padding: 1.25rem 2rem;
     height: auto;
-    font-family: 'Varela Round';
+    font-family: 'Varela Round', Sans;
     font-size: 80%;
     text-transform: uppercase;
     letter-spacing: .15rem;
@@ -101,4 +101,19 @@
 .input-group-text {
     background-color: rgba(0,0,0,0);
     border: 0;
+}
+
+.mini-dash {
+    z-index: 1042;
+    right: 1rem;
+    bottom: 1rem;
+    display: block;
+}
+
+.scroll-to-top a {
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: rgba(33,37,41,.5);
+    line-height: 3.1rem;
+    margin: 0 .5rem;
 }

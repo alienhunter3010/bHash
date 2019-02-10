@@ -10,20 +10,56 @@ const TagContext = React.createContext({
     refresh: () => {},
 });
 
-
-
 class BHashTag extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+          error: null,
+          isLoaded: false,
+          items: this.props.items
+        };
+
+        this.handleRefresh = this.handleRefresh.bind(this);
+    }
+
+    handleRefresh() {
+        fetch(this.props.url)
+          .then(res => res.json())
+          .then(
+            (result) => {
+              this.setState({
+                isLoaded: true,
+                items: result.items,
+                error: null
+              });
+            },
+            // Note: it's important to handle errors here
+            // instead of a catch() block so that we don't swallow
+            // exceptions from actual bugs in components.
+            (error) => {
+              this.setState({
+                isLoaded: true,
+                error
+              });
+            }
+          )
+    }
 
     render() {
         return (
             <React.Fragment>
-            {this.props.items.map(item => (
+            {this.state.items.map(item => (
             <TagContext>
                 {({tag, refresh}) => (
-                        <a onClick={refresh.bind(this, item)} href="#posts"><span class="badge badge-secondary mx-1">#{item}</span></a>
-                    )}
+                    <a onClick={refresh.bind(this, item)} href="#posts"><span class="badge badge-secondary mx-1">#{item}</span></a>
+                )}
             </TagContext>
             ))}
+            { this.props.url != undefined ? (
+                <a onClick={this.handleRefresh} ><span class="badge badge-primary mx-1"><i class="fas fa-sync-alt"></i></span></a>
+            ) : ( <br/> ) }
             </React.Fragment>
         );
     }
@@ -40,7 +76,6 @@ function PositionalImage(props) {
 }
 
 class PostStack extends React.Component {
-  previousTag = undefined;
 
   constructor(props) {
     super(props);
@@ -48,8 +83,11 @@ class PostStack extends React.Component {
     this.state = {
       error: null,
       isLoaded: false,
-      items: []
+      items: [],
+      previousTag: undefined
     };
+
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   postUpdate(url) {
@@ -76,13 +114,27 @@ class PostStack extends React.Component {
   }
 
   componentDidMount() {
-    this.postUpdate("https://bhash.raspberryip.com/s/byTime");
+      this.postUpdate("https://bhash.raspberryip.com/s/byTime");
   }
   componentDidUpdate() {
-    if (this.props.tag != this.previousTag) {
-        this.previousTag = this.props.tag;
-        this.postUpdate("https://bhash.raspberryip.com/s/byTag/" + this.props.tag);
-    }
+      if (this.props.tag != this.state.previousTag) {
+          this.setState({
+              previousTag: this.props.tag
+          });
+          this.postUpdate(this.props.tag == '' ?
+              "https://bhash.raspberryip.com/s/byTime" :
+              "https://bhash.raspberryip.com/s/byTag/" + this.props.tag);
+      }
+  }
+
+  handleRefresh(event) {
+      if (this.props.tag == '' || this.props.tag == undefined) {
+          this.postUpdate("https://bhash.raspberryip.com/s/byTime");
+      } else {
+          this.setState({
+              previousTag: this.props.tag + '_frc'
+          });
+      }
   }
 
   render() {
@@ -93,11 +145,23 @@ class PostStack extends React.Component {
       return <div>Loading...</div>;
     } else {
         var c=0;
-        items.map(item => (
-            item.image = '/img/HashtagEightys.png',
-            item.gravatarUrl = "https://gravatar.com/avatar/" + item.gravatar + '?s=40&d=robohash',
-            item.odd = ++c % 2
-        ));
+        const md = new Remarkable();
+        items.map(item => {
+            item.image = '/img/HashtagEightys.png';
+            try {
+                var cpxContent = JSON.parse(item.content);
+                item.image = cpxContent.img;
+                if (cpxContent.md != undefined) {
+                    item.content = md.render(cpxContent.md);
+                } else {
+                    item.content = cpxContent.content;
+                }
+            } catch (e) {
+                item.image = '/img/HashtagEightys.png';
+            }
+            item.gravatarUrl = "https://gravatar.com/avatar/" + item.gravatar + '?s=40&d=robohash';
+            item.odd = ++c % 2;
+        });
       return (
         <React.Fragment>
         {items.map(item => (
@@ -110,7 +174,7 @@ class PostStack extends React.Component {
                     <div class="d-flex h-100">
                         <div class="project-text w-100 my-auto text-center text-lg-left">
                             <h4 class="text-white"><img src={item.gravatarUrl} alt="profile" /> {item.username}</h4>
-                            <p class="mb-0 text-white-50">{item.content}</p>
+                            <p class="mb-0 text-white-50" dangerouslySetInnerHTML={{__html: item.content}} />
                             <hr class="d-none d-lg-block mb-0 ml-0" />
                             <small><i class="fas fa-clock"></i> {item.created}</small>
                             <div>
@@ -122,6 +186,14 @@ class PostStack extends React.Component {
             </div>
         </div>
         ))}
+        <div class="scroll-to-top position-fixed mini-dash">
+            <a class="js-scroll-trigger d-inline-block text-center text-white rounded" onClick={this.handleRefresh}>
+              <i class="fas fa-sync-alt"></i>
+            </a>
+            <a class="js-scroll-trigger d-inline-block text-center text-white rounded" href="#page-top">
+              <i class="fas fa-chevron-up"></i>
+            </a>
+        </div>
         </React.Fragment>
       );
     }
@@ -142,7 +214,7 @@ class BHashApp extends React.Component {
         this.state = {
             value: '',
             refresh: this.refreshPage
-      };
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -256,6 +328,7 @@ class BHashApp extends React.Component {
         </div>
     </div>
 </section>
+
         </React.Fragment>
         );
     }

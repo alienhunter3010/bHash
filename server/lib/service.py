@@ -23,7 +23,7 @@ class Service(WebUtility):
     def getResults(self, func, pathinfo, args):
         args.setdefault('limit', self.setResultLimit(
             pathinfo[0] if len(pathinfo) > 0 else Config.defaultResultLimit))
-        return func(args.get('limit'))
+        return self.asJson(func(args.get('limit')), 'items')
 
     def hotTags(self, pathinfo, args):
         return self.getResults(self.bHash.hotTags, pathinfo, args)
@@ -48,6 +48,8 @@ class Service(WebUtility):
     def byTag(self, pathinfo, args):
         args.setdefault('tag', pathinfo[0] if len(pathinfo) > 0 else None)
         args.setdefault('limit', self.setResultLimit(pathinfo[1]) if len(pathinfo) > 1 else Config.defaultResultLimit)
+        if args.get('tag') is None:
+            return self.byTime(pathinfo, args)
         return self.asJson(self.bHash.byTag(args.get('tag'), args.get('limit')), 'items')
 
     def byId(self, pathinfo, args):
