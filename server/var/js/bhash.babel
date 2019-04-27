@@ -17,8 +17,7 @@ class BHashTag extends React.Component {
 
         this.state = {
           error: null,
-          isLoaded: false,
-          items: this.props.items
+          isLoaded: false
         };
 
         this.handleRefresh = this.handleRefresh.bind(this);
@@ -29,11 +28,11 @@ class BHashTag extends React.Component {
           .then(res => res.json())
           .then(
             (result) => {
-              this.setState({
-                isLoaded: true,
-                items: result.items,
-                error: null
-              });
+                this.props.items = result.items;
+                this.setState({
+                    isLoaded: true,
+                    error: null
+                });
             },
             // Note: it's important to handle errors here
             // instead of a catch() block so that we don't swallow
@@ -50,7 +49,7 @@ class BHashTag extends React.Component {
     render() {
         return (
             <React.Fragment>
-            {this.state.items.map(item => (
+            {this.props.items.map(item => (
             <TagContext>
                 {({tag, refresh}) => (
                     <a onClick={refresh.bind(this, item)} href="#posts"><span class="badge badge-secondary mx-1">#{item}</span></a>
@@ -150,7 +149,9 @@ class PostStack extends React.Component {
             item.image = '/img/HashtagEightys.png';
             try {
                 var cpxContent = JSON.parse(item.content);
-                item.image = cpxContent.img;
+                if (cpxContent.img != undefined) {
+                    item.image = cpxContent.img;
+                }
                 if (cpxContent.md != undefined) {
                     item.content = md.render(cpxContent.md);
                 } else {

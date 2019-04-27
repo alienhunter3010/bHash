@@ -1,4 +1,3 @@
-import uuid
 import mysql.connector
 from etc.config import DBConfig
 from lib.exceptions import AuthException
@@ -38,37 +37,34 @@ class EnqueryPersistance(Persistance):
                ' MD5(LOWER(TRIM(email))) AS gravatar, content, bh_posts.created' \
                ' FROM bh_posts INNER JOIN bh_users ON bh_posts.bh_user=bh_users.id'
 
-    def getTags(self, query, limit, additional=None):
+    def getTags(self, query, limit=DBConfig.securityResultLimit, additional=None):
         filters = []
         if additional is not None:
             filters.append(additional)
         filters.append(min(limit, DBConfig.securityResultLimit))
         cur = self.keepQuery(query, filters)
 
-        result = []
         try:
+            result = []
             for tag in cur:
                 result.append(tag[0])
+            return result
         finally:
             cur.close()
-        return result
 
     def getPosts(self, query, qfilter=None, limit=DBConfig.securityResultLimit):
         limit = min(limit, DBConfig.securityResultLimit)
         filters = (limit,) if qfilter is None else (qfilter, limit)
         cur = self.keepQuery(query, filters)
 
-        posts = []
         try:
+            posts = []
             for (bh_post, bh_user, username, gravatar, content, created) in cur:
                 posts.append({'id': bh_post, 'username': username, 'content': content, 'created': str(created),
                               'owner': bh_user, 'gravatar': gravatar})
+            return posts
         finally:
             cur.close()
-
-        for post in posts:
-            post['tags'] = self.getPostTags(post['id'])
-        return posts
 
     def getHotTags(self, limit=DBConfig.defaultResultLimit):
         query = "SELECT tag FROM bh_tags ORDER BY hot DESC LIMIT %s"
@@ -84,8 +80,8 @@ class EnqueryPersistance(Persistance):
         return self.getTags(query, limit, additional=trendPast)
 
     def getPostTags(self, postid):
-        query = "SELECT bh_tag AS tag FROM bh_posts_tags WHERE bh_post=%s"
-        return self.getTags(query, postid)
+        query = "SELECT bh_tag AS tag FROM bh_posts_tags WHERE bh_post=%s LIMIT %s"
+        return self.getTags(query, additional=postid)
 
     def getLastByUid(self, uid, limit=DBConfig.defaultResultLimit):
         query = self.postData + " WHERE bh_user=%s ORDER BY bh_posts.created DESC LIMIT %s"
@@ -126,9 +122,8 @@ class AuthPersistance(Persistance):
             cur.close()
         raise AuthException('Authentication error')
 
-    def getToken(self, uid, duration):
+    def getToken(self, uid, duration, token):
         query = "INSERT INTO bh_sessions SET bh_user=%s, token=%s, outofdate=ADDDATE(NOW(), INTERVAL %s SECOND)"
-        token = str(uuid.uuid4())
         self.doQuery(query, (uid, token, duration))
         return token
 
