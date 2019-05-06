@@ -3,13 +3,13 @@
 import web
 from lib.controller import Controller
 from lib.service import Service
-from etc.config import Config
+from etc.config import Config, DBConfig
 
 
 class Debug:
 
     def GET(self, pathinfo):
-        return "a DEBUG patch @ {}".format(Service.__name__)
+        return "a DEBUG patch @ {}".format(DBConfig.password)
 
 
 web.config.debug = False

@@ -4,6 +4,7 @@
 from lib.server import Server
 from lib.operational.bhash import BHash
 
+
 class Controller(Server):
     name = 'Controller'
     bhash = BHash()

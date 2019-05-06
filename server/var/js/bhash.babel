@@ -113,7 +113,7 @@ class PostStack extends React.Component {
   }
 
   componentDidMount() {
-      this.postUpdate("https://bhash.raspberryip.com/s/byTime");
+      this.postUpdate("/s/byTime");
   }
   componentDidUpdate() {
       if (this.props.tag != this.state.previousTag) {
@@ -121,14 +121,14 @@ class PostStack extends React.Component {
               previousTag: this.props.tag
           });
           this.postUpdate(this.props.tag == '' ?
-              "https://bhash.raspberryip.com/s/byTime" :
-              "https://bhash.raspberryip.com/s/byTag/" + this.props.tag);
+              "/s/byTime" :
+              "/s/byTag/" + this.props.tag);
       }
   }
 
   handleRefresh(event) {
       if (this.props.tag == '' || this.props.tag == undefined) {
-          this.postUpdate("https://bhash.raspberryip.com/s/byTime");
+          this.postUpdate("/s/byTime");
       } else {
           this.setState({
               previousTag: this.props.tag + '_frc'
