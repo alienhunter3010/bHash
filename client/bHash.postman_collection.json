@@ -1,0 +1,202 @@
+{
+	"info": {
+		"_postman_id": "3c0c4ef0-c4da-4213-a82c-ee0b126238a1",
+		"name": "bHash",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register w/ mail",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Blender",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "justATest",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "ac.ecchin@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://bhash.raspberryip.com/s/register",
+					"protocol": "https",
+					"host": [
+						"bhash",
+						"raspberryip",
+						"com"
+					],
+					"path": [
+						"s",
+						"register"
+					],
+					"query": [
+						{
+							"key": "password",
+							"value": "justATest",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Add a new user"
+			},
+			"response": []
+		},
+		{
+			"name": "Register w/o mail",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "DaneelOlivaw",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "justATest",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://bhash.raspberryip.com/s/register?",
+					"protocol": "https",
+					"host": [
+						"bhash",
+						"raspberryip",
+						"com"
+					],
+					"path": [
+						"s",
+						"register"
+					],
+					"query": [
+						{
+							"key": "password",
+							"value": "justATest",
+							"disabled": true
+						},
+						{
+							"key": "username",
+							"value": "Blender",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "tags",
+							"value": "#redbull #stratos #freefall",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "{\"md\": \"**Felix Baumgartner**, *first man to break the speed of sound in a freefall*\", \"url\": \"https://www.yatzer.com/sites/default/files/article_images/2997/Red-Bull-Stratos-Mission-Accomplished-yatzer-6.jpg\"}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://bhash.raspberryip.com/s/publish/8bc40c4f-35b3-41f2-a109-8284e37a45f1",
+					"protocol": "https",
+					"host": [
+						"bhash",
+						"raspberryip",
+						"com"
+					],
+					"path": [
+						"s",
+						"publish",
+						"8bc40c4f-35b3-41f2-a109-8284e37a45f1"
+					]
+				},
+				"description": "Publish a post"
+			},
+			"response": []
+		},
+		{
+			"name": "Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "DaneelOlivaw",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "justATest",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://bhash.raspberryip.com/s/token",
+					"protocol": "https",
+					"host": [
+						"bhash",
+						"raspberryip",
+						"com"
+					],
+					"path": [
+						"s",
+						"token"
+					]
+				},
+				"description": "get a new token"
+			},
+			"response": []
+		}
+	]
+}
